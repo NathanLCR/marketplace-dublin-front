@@ -16,18 +16,20 @@ function ProfileMenu(props: {user: {avatarUrl: string}}) {
     logout();
   }
 
-//   const handleClickOutside = (event: Event) => {
-//     if (menuRef.current ) {
-//       setIsOpen(false);
-//     }
-//   };
+  const handleClickOutside = (event: Event) => {
+    setTimeout(() => {
+      if (menuRef.current ) {
+        setIsOpen(false);
+      }
+    }, 1)
+  };
 
-//   useEffect(() => {
-//     document.addEventListener('mousedown', handleClickOutside);
-//     return () => {
-//       document.removeEventListener('mousedown', handleClickOutside);
-//     };
-//   }, []);
+  // useEffect(() => {
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, []);
 
   return (
     <div className="relative" ref={menuRef}>

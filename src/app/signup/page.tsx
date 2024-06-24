@@ -1,90 +1,114 @@
-'use server';
+'use client';
 
-import { redirect } from 'next/navigation';
-import React from 'react';
+import { signUp } from '@/actions/user-actions';
+import PasswordStrengthMeter from '@/components/password-strength-meter';
+import React, { useState } from 'react';
+import { FieldValues, useForm } from 'react-hook-form';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Signup() {
-  const handleSignUp = async (formData: FormData) => {
-    'use server'    
-    const response = await fetch("http:localhost:8080/auth/signup", {
-        method: "post",
-        headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-        },
-    
-        body: JSON.stringify({
-          email: formData.get("email"), 
-          password: formData.get("password"), 
-          cellphoneNumber: formData.get("cellphoneNumber"), 
-          fullName: formData.get("fullName"),
-          avatarUrl: "https://img.freepik.com/fotos-gratis/avatar-androgino-de-pessoa-queer-nao-binaria_23-2151100226.jpg?w=1380&t=st=1719013625~exp=1719014225~hmac=87ad51a52ff37eb9031b410485e454b188a9d38ff7286bed7bcb08699a095faf"
-      })
-    })
-    if (response.ok) {
-        const data = await response.json();
-        const token = data.token;
-        redirect("/login");
-    } else {
-        // Tratamento para falha na autenticação
+
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const [password, setPassword] = useState('');
+
+
+  const displayError = (error: Error) => {
+    toast.error(error.message, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
+  const handleSignUp = async (formData: FieldValues) => {
+    if (formData.password !== formData.confirmPassword) {
+      displayError(new Error("Your passwords must match!"));
+      return;
     }
-}
+    try {
+      signUp(formData);
+    } catch (e) {
+      displayError(e as Error);
+    }
+    
+  }
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 text-black">
+      <ToastContainer/>
       <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold text-blue-600 mb-4 text-center">Sign Up</h1>
-        <form className="space-y-4" action={handleSignUp}>
-          <div>
+        <form className="space-y-4" onSubmit={handleSubmit(handleSignUp)}>
+          <div className='mb'>
             <label className="block text-gray-700 mb-1">Name</label>
             <input
               id='fullName'
-              name='fullName'
               type="text"
-              className="w-full p-2 border rounded"
+              className={`mt-1 block w-full p-2 border rounded ${errors.fullName ? 'border-red-500' : 'border-gray-300'}`}
+              {...register('fullName', { required: 'Name is required'})}
               placeholder="Enter your name"
               required
             />
           </div>
-          <div>
+          <div className='mb-4'>
             <label className="block text-gray-700 mb-1">Email</label>
             <input
-              name='email'
               id='email'
               type="email"
-              className="w-full p-2 border rounded"
+              className={`mt-1 block w-full p-2 border rounded ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+              {...register('email', { required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' } })}
               placeholder="Enter your email"
               required
             />
           </div>
-          <div>
+          <div className='mb-4'>
             <label className="block text-gray-700 mb-1">Cellphone</label>
             <input
               id='cellphoneNumber'
-              name='cellphoneNumber'
               type="text"
-              className="w-full p-2 border rounded"
+              className={`mt-1 block w-full p-2 border rounded ${errors.fullName ? 'border-red-500' : 'border-gray-300'}`}
+              {...register('cellphoneNumber', { required: 'Cell Phone Number is required'})}
               placeholder="Enter your cellphone number"
               required
             />
           </div>
-          <div>
+          <div className='mb-4'>
             <label className="block text-gray-700 mb-1">Password</label>
             <input
-              id='password'
-              name='password'
               type="password"
-              className="w-full p-2 border rounded"
-              placeholder="Enter your password"
-              required
+              id="password"
+              className={`mt-1 block w-full p-2 border rounded ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              {...register('password', {
+                required: 'Password is required',
+                minLength: { value: 8, message: 'Password must be at least 8 characters' },
+                validate: (value) => 
+                  /[a-z]/.test(value) || 'Password must include at least one lowercase letter' &&
+                  /[A-Z]/.test(value) || 'Password must include at least one uppercase letter' &&
+                  /[0-9]/.test(value) || 'Password must include at least one number' &&
+                  /[^A-Za-z0-9]/.test(value) || 'Password must include at least one special character'
+              })}
+              onChange={handlePasswordChange}
             />
+            {errors.password && <span className="text-red-500 text-sm">{errors.password.message}</span>}
+            <PasswordStrengthMeter password={password} />
           </div>
-          <div>
+          <div className='mb-6'>
             <label className="block text-gray-700 mb-1">Confirm Password</label>
             <input
               id='confirmPassword'
-              name='confirmPassword'
               type="password"
-              className="w-full p-2 border rounded"
+              className={`mt-1 block w-full p-2 border rounded ${errors.fullName ? 'border-red-500' : 'border-gray-300'}`}
+              {...register('confirmPassword', { required: 'You need to confirma the password'})}
               placeholder="Confirm your password"
               required
             />
@@ -95,7 +119,7 @@ function Signup() {
             <a href="/login" className="text-blue-600 hover:underline ml-1">Login</a>
           </p>
           <p className="text-center text-gray-700 mt-4">
-                <a href="/initial" className="text-blue-600 hover:underline">Back to Home</a>
+                <a href="/home" className="text-blue-600 hover:underline">Back to Home</a>
             </p>
         </form>
       </div>
