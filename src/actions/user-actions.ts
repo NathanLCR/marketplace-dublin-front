@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { cookies, headers } from 'next/headers';
 import { error } from 'console';
 import { FieldValues } from 'react-hook-form';
+import { BASE_URL } from '@/constants';
 
 export async function getUserAuthenticated() {
     const sessionCookies = cookies();
@@ -11,7 +12,7 @@ export async function getUserAuthenticated() {
     if (!token || token === null) {
         return null
     }
-    const response = await fetch('http:localhost:8080/api/user/v1/me', {headers: {"Authorization": `Bearer ${token.value}`}});
+    const response = await fetch(`${BASE_URL}/user/v1/me`, {headers: {"Authorization": `Bearer ${token.value}`}});
     const user = await response.json();
     return user;
 }
@@ -23,7 +24,7 @@ export async function logout() {
 
 export const login = async (formData: FieldValues) => {
     'use server'
-    const response = await fetch("http:localhost:8080/auth/login", {
+    const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "post",
         headers: {
         'Accept': 'application/json',
@@ -46,7 +47,7 @@ export const login = async (formData: FieldValues) => {
 
 export const signUp = async(formData: FieldValues) => {
     'use server'    
-    const response = await fetch("http:localhost:8080/auth/signup", {
+    const response = await fetch(`${BASE_URL}/auth/signup`, {
         method: "post",
         headers: {
         'Accept': 'application/json',
