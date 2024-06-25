@@ -47,7 +47,7 @@ function Login() {
                     className={`mt-1 block w-full p-2 border rounded ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                     {...register('email', { required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' } })}
                 />
-                {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
+                {/* {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>} */}
             </div>
             <div className='mb-6'>
                 <label className="block text-gray-700 mb-1">Password</label>
@@ -57,7 +57,7 @@ function Login() {
                     className={`mt-1 block w-full p-2 border rounded ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
                     {...register('password', { required: 'Password is required' })}
                 />
-                {errors.email && <span className="text-red-500 text-sm">{errors.password.message}</span>}
+                {/* {errors.email && <span className="text-red-500 text-sm">{errors.password.message}</span>} */}
             </div>
             <button type="submit" className="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700" disabled={isLoading} >{isLoading ? "Loading" : "Login"}</button>
             <p className="text-center text-gray-700 mt-4">Don't have an account? 

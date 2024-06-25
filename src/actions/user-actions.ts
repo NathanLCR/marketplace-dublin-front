@@ -66,6 +66,7 @@ export const signUp = async(formData: FieldValues) => {
         const token = data.token;
         redirect("/login");
     } else {
-        // Tratamento para falha na autenticação
-        }
+        const message = await response.text();
+        throw new Error(message);
+    }
 }

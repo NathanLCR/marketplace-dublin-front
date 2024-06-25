@@ -2,7 +2,7 @@
 
 import { signUp } from '@/actions/user-actions';
 import PasswordStrengthMeter from '@/components/password-strength-meter';
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -36,17 +36,15 @@ function Signup() {
     } catch (e) {
       displayError(e as Error);
     }
-    
   }
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 text-black">
-      <ToastContainer/>
-      <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-white text-black">
+      <div className="bg-white p-6 rounded shadow-2xl w-full max-w-md">
         <h1 className="text-2xl font-bold text-blue-600 mb-4 text-center">Sign Up</h1>
         <form className="space-y-4" onSubmit={handleSubmit(handleSignUp)}>
           <div className='mb'>
@@ -99,7 +97,7 @@ function Signup() {
               })}
               onChange={handlePasswordChange}
             />
-            {errors.password && <span className="text-red-500 text-sm">{errors.password.message}</span>}
+            {errors.password && <span className="text-red-500 text-sm">{errors.password.message as ReactNode}</span>}
             <PasswordStrengthMeter password={password} />
           </div>
           <div className='mb-6'>
